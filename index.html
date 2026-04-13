@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A pokemon card can be so much expensive than you think. Who is buying and why?</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-size: 20px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            text-rendering: optimizeLegibility;
+        }
+
+        .content {
+            max-width: 640px;
+            margin: auto;
+        }
+
+        .header {
+            padding: 3em 0;
+        }
+
+        a {
+            color: #f05349;
+        }
+
+        .footer {
+            background: #f4f4f4;
+            text-align: center;
+            font-size: 0.8em;
+            margin-top: 4em;
+            padding: 4em 0;
+        }
+
+        figure {
+            margin: 0;
+            padding-bottom: 1.2em;
+        }
+
+        figcaption {
+            font-size: 0.8em;
+            text-align: center;
+            margin-top: 0.5em;
+            color: #666;
+        }
+
+        h1 {
+            font-family: 'Lora', Georgia, serif;
+            font-weight: bold;
+            font-size: 3em;
+            line-height: 1.1;
+        }
+
+        .subhead {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        iframe,
+        img,
+        video {
+            max-width: 100%;
+        }
+
+        p {
+            line-height: 1.6;
+            margin: 0;
+            padding-bottom: 1.2em;
+        }
+
+        .full-width figure {
+            text-align: center;
+        }
+
+        ul {
+            margin: 0;
+            padding-bottom: 1em;
+            line-height: 1.6;
+        }
+
+        iframe {
+            padding-bottom: 1.2em;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background: #fff880;
+        }
+
+        /* margin on mobile */
+        @media (max-width: 640px) {
+            body {
+                font-size: 18px;
+            }
+
+            .content {
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }
+        }
+    </style>
+    <link href="scrolly-styles.css" rel="stylesheet">
+    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"></script>
+</head>
+
+<body>
+    <div class="content">
+
+        <style>
+            .flip-card {
+                background-color: transparent;
+                width: 290px;
+                height: 400px;
+                perspective: 1000px;
+                margin: 1em auto;
+            }
+
+            .flip-card-inner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            }
+
+            .flip-card:hover .flip-card-inner {
+                transform: rotateY(180deg);
+            }
+
+            .flip-card-front, .flip-card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+            }
+
+            .flip-card-back {
+                transform: rotateY(180deg);
+            }
+
+            .flip-card-front img, .flip-card-back img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        </style>
+        
+        <div class="content">
+            <p style="text-align: center; margin-top: 2em;">Can you guess how much is this pokemon card?</p>
+        </div>
+
+
+        <figure style="text-align: center;">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="back.jpg" alt="Card Back">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="menghuan.jpg" alt="Menghuan">
+                    </div>
+                </div>
+            </div>
+            <figcaption>Pokémon Card Mid-Grade Mew Promo PSA 10 Collectible</figcaption>
+        </figure>
+
+        <style>
+            .guess-container {
+                text-align: center;
+                margin: 1.5em auto;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-size: 20px;
+            }
+
+            .guess-form {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.2em;
+            }
+
+            .guess-form .dollar-sign {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+
+            .guess-form input {
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-size: 1em;
+                padding: 0.3em 0.5em;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 180px;
+            }
+
+            .guess-form button {
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-size: 0.9em;
+                padding: 0.3em 1em;
+                background-color: #f05349;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left: 0.3em;
+            }
+
+            .guess-form button:hover {
+                background-color: #d94339;
+            }
+
+            .guess-result {
+                margin-top: 0.5em;
+                font-size: 1em;
+                min-height: 1.5em;
+            }
+
+            .guess-result.wrong {
+                color: #d9534f;
+            }
+
+            .guess-result.correct {
+                color: #5cb85c;
+            }
+        </style>
+
+        <div class="guess-container">
+            <div class="guess-form">
+                <span class="dollar-sign">$</span>
+                <input type="text" id="guess-input" placeholder="Enter amount">
+                <button onclick="checkGuess()">Submit</button>
+            </div>
+            <div class="guess-result" id="guess-result"></div>
+        </div>
+
+        <script>
+            function checkGuess() {
+                var input = document.getElementById('guess-input').value;
+                var result = document.getElementById('guess-result');
+                var cleaned = input.replace(/[$,\s]/g, '');
+                var num = parseFloat(cleaned);
+
+                if (isNaN(num)) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
+                    return;
+                }
+
+                if (num === 24000) {
+                    result.className = 'guess-result correct';
+                    result.innerHTML = '&#10004; Correct! This card is worth $24,000!';
+                } else if (num < 24000) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too low! Guess higher.';
+                } else {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too high! Guess lower.';
+                }
+            }
+
+            document.getElementById('guess-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkGuess();
+            });
+        </script>
+
+        <div class="content">
+            <p style="text-align: center; margin-top: 2em;">How about this Pikachu as if it's painted by Van Gogh?</p>
+        </div>
+
+        <figure style="text-align: center;">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="back.jpg" alt="Card Back">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="pikachu.jpg" alt="Pikachu">
+                    </div>
+                </div>
+            </div>
+            <figcaption>Pikachu with Grey Felt Hat Pokemon Promo PSA 10 </figcaption>
+        </figure>
+
+        <div class="guess-container">
+            <div class="guess-form">
+                <span class="dollar-sign">$</span>
+                <input type="text" id="guess-input-2" placeholder="Enter amount">
+                <button onclick="checkGuess2()">Submit</button>
+            </div>
+            <div class="guess-result" id="guess-result-2"></div>
+        </div>
+
+        <script>
+            function checkGuess2() {
+                var input = document.getElementById('guess-input-2').value;
+                var result = document.getElementById('guess-result-2');
+                var cleaned = input.replace(/[$,\s]/g, '');
+                var num = parseFloat(cleaned);
+
+                if (isNaN(num)) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
+                    return;
+                }
+
+                if (num === 2600) {
+                    result.className = 'guess-result correct';
+                    result.innerHTML = '&#10004; Correct! This card is worth $2,600!';
+                } else if (num < 2600) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too low! Guess higher.';
+                } else {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too high! Guess lower.';
+                }
+            }
+
+            document.getElementById('guess-input-2').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkGuess2();
+            });
+        </script>
+
+        <div class="content">
+            <p style="text-align: center; margin-top: 2em;">This sleepy cute Dragonite?</p>
+        </div>
+
+        <figure style="text-align: center;">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="back.jpg" alt="Card Back">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="dragonite.jpg" alt="Dragonite">
+                    </div>
+                </div>
+            </div>
+            <figcaption>Dragonite V #192 Pokemon Evolving Skies PSA 10</figcaption>
+        </figure>
+
+        <div class="guess-container">
+            <div class="guess-form">
+                <span class="dollar-sign">$</span>
+                <input type="text" id="guess-input-3" placeholder="Enter amount">
+                <button onclick="checkGuess3()">Submit</button>
+            </div>
+            <div class="guess-result" id="guess-result-3"></div>
+        </div>
+
+        <script>
+            function checkGuess3() {
+                var input = document.getElementById('guess-input-3').value;
+                var result = document.getElementById('guess-result-3');
+                var cleaned = input.replace(/[$,\s]/g, '');
+                var num = parseFloat(cleaned);
+
+                if (isNaN(num)) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
+                    return;
+                }
+
+                if (num === 960) {
+                    result.className = 'guess-result correct';
+                    result.innerHTML = '&#10004; Correct! This card is worth $960!';
+                } else if (num < 960) {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too low! Guess higher.';
+                } else {
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = '&#10060; Too high! Guess lower.';
+                }
+            }
+
+            document.getElementById('guess-input-3').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkGuess3();
+            });
+        </script>
+
+        <div class="header">
+            <h1>A Pokemon card can be so much expensive than you think. Who is buying and why?</h1>
+            <p class="subhead">Inside the world of graded Pokemon cards, where nostalgia meets speculation</p>
+        </div>
+        <div class="byline">
+            <p>By <a href="https://haiyib.github.io/">Haiyi Bi</a></p>
+        </div>
+        <p>In 1999, you could buy a pack of Pokemon cards for about four dollars. Today, a single card from that era can sell for more than a house. The Pokemon card market has quietly turned into one of the strangest corners of the collectibles world, driven by childhood nostalgia, YouTube unboxing videos, and a grading system that can multiply a card's value overnight.</p>
+        <p>I scraped pricing data from 10 major Pokemon card sets, and looked at what makes certain cards so much more expensive than others. The answer isn't always what you'd expect. </p>
+    </div>
+    <section id="scrolly-ai2html" class="scrolly-container">
+        <div class="sticky-thing">
+
+            <!-- pokemon chart SVG loaded inline for D3 interaction -->
+            <div id="pokemon-chart-container" style="width: 75vw; max-width: 1008px; margin: 0 auto;"></div>
+
+        </div>
+        <div class="steps-container">
+            <div class="step" id="step-zero">
+                <p>I pulled pricing data on PSA 10 graded cards for the 10 most expensive Pokémon species. Each dot is a card. The further right, the more cards that species has. The higher up, the pricier.</p>
+            </div>
+            <div class="step" id="step-one">
+                <p>No surprise here: Charizard is king. A 1st Edition Base Set Charizard went for <strong>$269,250</strong>. It was one of the hardest cards to pull back in 1999, and it became the poster child of the entire hobby. Low supply, massive nostalgia, and a generation of collectors who grew up wanting one.</p>
+            </div>
+            <div class="step" id="step-two">
+                <p><strong>Mew</strong>, <strong>Mewtwo</strong>, and <strong>Rayquaza</strong> follow a similar pattern. They were fan favorites in the games and movies, and many of their expensive cards come from limited promo sets or Japanese exclusives that never got wide distribution.</p>
+            </div>
+            <div class="step" id="step-three">
+                <p>But zoom out and you'll notice most cards, even PSA 10s, sell for under $1,000. What separates a $50 card from a $50,000 one usually comes down to the print run, the set it's from, and whether it's a 1st Edition. The Pokémon on the front matters, but it's not the whole story.</p>
+            </div>
+        </div>
+    </section>
+    <div class="content">
+        <p>So what actually drives the price? A few things. First, the grading. PSA, the biggest card grading company, scores cards on a 1 to 10 scale. A PSA 10, meaning the card is in virtually perfect condition, can be worth 10 or even 50 times more than the same card at a PSA 8. For old cards printed in the late '90s, finding one in perfect shape is genuinely rare.</p>
+        <p>Then there's the print run. First Edition cards from the original Base Set were only printed once. When the Pokemon Company realized how much demand there was, they reprinted the set without the 1st Edition stamp. That small difference on the card now means a difference of tens of thousands of dollars.</p>
+        <p>And finally, there's the cultural factor. Pokemon didn't just stay popular with kids. The people who collected cards in the late '90s grew up, got jobs, and started buying back the cards they had as children. When Logan Paul wore a $150,000 Charizard around his neck in 2020, it kicked off a speculation frenzy that pushed prices even higher.</p>
+        <p>The market has cooled off since then, but the data still tells the story: a handful of species, a handful of rare prints, and a lot of people who never quite got over their childhood obsession.</p>
+    </div>
+    <div class="footer">
+        <div class="content">
+            <p>Data from <a href="https://www.pricecharting.com/">PriceCharting</a>. Analysis and visualization by <a href="https://haiyib.github.io/">Haiyi Bi</a>.</p>
+        </div>
+    </div>
+    <style>
+        .dimmed {
+            opacity: 0.1 !important;
+        }
+        .highlighted {
+            opacity: 1 !important;
+        }
+        .annotation-hidden {
+            opacity: 0 !important;
+        }
+        #pokemon-chart-container svg circle,
+        #pokemon-chart-container svg text,
+        #pokemon-chart-container svg polyline {
+            transition: opacity 0.5s ease;
+        }
+    </style>
+    <script>
+
+        /* Load the pokemon chart SVG inline so D3 can manipulate it */
+        fetch('pokemon-chart.svg')
+            .then(function(r) { return r.text() })
+            .then(function(svgText) {
+                document.getElementById('pokemon-chart-container').innerHTML = svgText;
+                var svg = d3.select('#pokemon-chart-container svg');
+                svg.attr('width', '100%').attr('height', null);
+                initScrolly();
+            });
+
+        /*
+         * Species CSS class mapping:
+         * Charizard: cls-6, cls-8    Mewtwo: cls-19, cls-16
+         * Rayquaza: cls-24, cls-12   Venusaur: cls-22, cls-5
+         * Mew: cls-17, cls-9         Infernape: cls-21, cls-4
+         * Chansey: cls-23, cls-20    Blastoise: cls-11, cls-10
+         * Latios: cls-15, cls-13     Gengar: cls-14, cls-7
+         * Background/other: cls-18
+         */
+
+        var allSpeciesClasses = '.cls-6,.cls-8,.cls-19,.cls-16,.cls-24,.cls-12,.cls-22,.cls-5,.cls-17,.cls-9,.cls-21,.cls-4,.cls-23,.cls-20,.cls-11,.cls-10,.cls-15,.cls-13,.cls-14,.cls-7';
+        var charizardClasses = '.cls-6,.cls-8';
+        var legendaryClasses = '.cls-17,.cls-9,.cls-19,.cls-16,.cls-24,.cls-12';
+        var bgClasses = '.cls-18';
+        var annotationSelector = '.cls-30,.cls-2';
+
+        function resetAll() {
+            d3.selectAll('#pokemon-chart-container circle').classed('dimmed', false).classed('highlighted', false);
+            d3.selectAll(annotationSelector).classed('annotation-hidden', false);
+        }
+
+        function dimAll() {
+            d3.selectAll('#pokemon-chart-container circle').classed('dimmed', true).classed('highlighted', false);
+        }
+
+        function highlightClasses(selector) {
+            d3.selectAll(selector).classed('dimmed', false).classed('highlighted', true);
+        }
+
+        function initScrolly() {
+
+            /* Step zero: overview — show everything, hide annotation */
+            d3.select("#step-zero").on('stepin', function (e) {
+                resetAll();
+                d3.selectAll(annotationSelector).classed('annotation-hidden', true);
+            });
+
+            d3.select("#step-zero").on('stepout', function (e) {
+                if (e.detail.direction === 'up') {
+                    resetAll();
+                    d3.selectAll(annotationSelector).classed('annotation-hidden', true);
+                }
+            });
+
+            /* Step one: highlight Charizard, show annotation */
+            d3.select("#step-one").on('stepin', function (e) {
+                dimAll();
+                highlightClasses(charizardClasses);
+                d3.selectAll(annotationSelector).classed('annotation-hidden', false);
+            });
+
+            /* Step two: highlight legendary/fan-fave species */
+            d3.select("#step-two").on('stepin', function (e) {
+                dimAll();
+                highlightClasses(legendaryClasses);
+                d3.selectAll(annotationSelector).classed('annotation-hidden', true);
+            });
+
+            /* Step three: show everything again */
+            d3.select("#step-three").on('stepin', function (e) {
+                resetAll();
+                d3.selectAll(annotationSelector).classed('annotation-hidden', false);
+            });
+        }
+
+    </script>
+
+
+
+    <script>
+        /*************
+        
+        This is the JavaScript that makes the scrolly work 
+        
+        *************/
+
+        /* 
+        This part attaches a scroll to the element with id="scrolly-ai2html"    
+        */
+        (() => {
+            const scroller = scrollama()
+
+            scroller
+                .setup({
+                    parent: document.querySelector("#scrolly-ai2html"),
+                    step: ".step",
+                    offset: 0.6,
+                    debug: false,
+                })
+                .onStepEnter(function ({ element, index, direction }) {
+                    const event = new CustomEvent("stepin", { detail: { direction: direction } })
+                    element.dispatchEvent(event)
+                })
+                .onStepExit(function ({ element, index, direction }) {
+                    const event = new CustomEvent("stepout", { detail: { direction: direction } })
+                    if (direction === "up" && element.previousElementSibling) {
+                        const event = new CustomEvent("stepin", { detail: { direction: direction } })
+                        element.previousElementSibling.dispatchEvent(event)
+                    }
+                })
+
+            window.addEventListener("resize", scroller.resize)
+        })()
+
+    </script>
+    <style>
+        /* Change this to adjust the padding between steps */
+        .step {
+            margin-bottom: 70vh;
+        }
+    </style>
+</body>
+
+</html>

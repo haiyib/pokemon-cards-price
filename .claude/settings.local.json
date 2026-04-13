@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(file:*)",
+      "Bash(awk '{print $9, \"\\(\" $5 \"\\)\"}')",
+      "WebFetch(domain:www.w3schools.com)",
+      "WebFetch(domain:www.pricecharting.com)",
+      "WebSearch",
+      "WebFetch(domain:ai2html.org)",
+      "Bash(mdfind \"kMDItemDisplayName == 'Adobe Illustrator*'\")",
+      "Bash(ls \"/Applications/Adobe Illustrator 2026/Presets/\"*/Scripts/)",
+      "Bash(curl -sL -o \"/Applications/Adobe Illustrator 2026/Presets.localized/en_US/Scripts/ai2html.js\" \"https://raw.githubusercontent.com/newsdev/ai2html/master/ai2html.js\")",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(curl -v -o /tmp/ai2html.js \"https://raw.githubusercontent.com/newsdev/ai2html/master/ai2html.js\")",
+      "WebFetch(domain:jsoma.github.io)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}
