@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A pokemon card can be so much expensive than you think. Who is buying and why?</title>
+    <title>Pokemon cards</title>
 
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
     <style>
+        html {
+            overflow-x: hidden;   /* prevent sideways drag; safe for the sticky chart */
+        }
+
         body {
             margin: 0;
             font-size: 20px;
@@ -56,8 +60,8 @@
         h1 {
             font-family: 'Lora', Georgia, serif;
             font-weight: bold;
-            font-size: 3em;
-            line-height: 1.1;
+            font-size: 2.3em;
+            line-height: 1.35;
         }
 
         .subhead {
@@ -123,6 +127,7 @@
                 height: 400px;
                 perspective: 1000px;
                 margin: 1em auto;
+                cursor: pointer;
             }
 
             .flip-card-inner {
@@ -135,7 +140,7 @@
                 box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
             }
 
-            .flip-card:hover .flip-card-inner {
+            .flip-card.flipped .flip-card-inner {
                 transform: rotateY(180deg);
             }
 
@@ -156,7 +161,16 @@
                 object-fit: cover;
             }
         </style>
-        
+
+        <script>
+            /* Click a card to flip it; it stays flipped until clicked again. */
+            document.addEventListener('click', function (e) {
+                var card = e.target.closest('.flip-card');
+                if (card) card.classList.toggle('flipped');
+            });
+        </script>
+
+        <section class="card-quiz">
         <div class="content">
             <p style="text-align: center; margin-top: 2em;">Can you guess how much is this pokemon card?</p>
         </div>
@@ -166,10 +180,10 @@
             <div class="flip-card">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <img src="back.jpg" alt="Card Back">
+                        <img src="images/back.jpg" alt="Card Back">
                     </div>
                     <div class="flip-card-back">
-                        <img src="menghuan.jpg" alt="Menghuan">
+                        <img src="images/mew.jpg" alt="Mew">
                     </div>
                 </div>
             </div>
@@ -233,47 +247,75 @@
             .guess-result.correct {
                 color: #5cb85c;
             }
-        </style>
 
-        <div class="guess-container">
-            <div class="guess-form">
-                <span class="dollar-sign">$</span>
-                <input type="text" id="guess-input" placeholder="Enter amount">
-                <button onclick="checkGuess()">Submit</button>
-            </div>
-            <div class="guess-result" id="guess-result"></div>
-        </div>
-
-        <script>
-            function checkGuess() {
-                var input = document.getElementById('guess-input').value;
-                var result = document.getElementById('guess-result');
-                var cleaned = input.replace(/[$,\s]/g, '');
-                var num = parseFloat(cleaned);
-
-                if (isNaN(num)) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
-                    return;
-                }
-
-                if (num === 24000) {
-                    result.className = 'guess-result correct';
-                    result.innerHTML = '&#10004; Correct! This card is worth $24,000!';
-                } else if (num < 24000) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too low! Guess higher.';
-                } else {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too high! Guess lower.';
-                }
+            .guess-result.revealed {
+                color: #333;
             }
 
-            document.getElementById('guess-input').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') checkGuess();
-            });
-        </script>
+            .guess-result .guess-left {
+                color: #999;
+                font-size: 0.85em;
+            }
 
+            .guess-form input:disabled {
+                background: #f4f4f4;
+                color: #999;
+            }
+
+            .guess-form button:disabled {
+                background: #ccc;
+                cursor: default;
+            }
+
+            .guess-reveal {
+                margin-top: 0.6em;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-size: 0.8em;
+                background: none;
+                border: none;
+                color: #888;
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
+            .guess-reveal:hover {
+                color: #f05349;
+            }
+
+            .guess-reveal:disabled {
+                display: none;
+            }
+
+            /* Each card + its guess form fills the viewport, so only one
+               shows at a time, with a divider between them. */
+            .card-quiz {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                box-sizing: border-box;
+                padding: 2em 0;
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .card-quiz > .content {
+                width: 100%;
+            }
+        </style>
+
+        <div class="guess-container" data-price="24000">
+            <div class="guess-form">
+                <span class="dollar-sign">$</span>
+                <input type="text" class="guess-input" placeholder="Enter amount">
+                <button class="guess-submit">Submit</button>
+            </div>
+            <div class="guess-result"></div>
+            <button class="guess-reveal">Show price</button>
+        </div>
+        </section>
+
+        <section class="card-quiz">
         <div class="content">
             <p style="text-align: center; margin-top: 2em;">How about this Pikachu as if it's painted by Van Gogh?</p>
         </div>
@@ -282,55 +324,28 @@
             <div class="flip-card">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <img src="back.jpg" alt="Card Back">
+                        <img src="images/back.jpg" alt="Card Back">
                     </div>
                     <div class="flip-card-back">
-                        <img src="pikachu.jpg" alt="Pikachu">
+                        <img src="images/pikachu.jpg" alt="Pikachu">
                     </div>
                 </div>
             </div>
             <figcaption>Pikachu with Grey Felt Hat Pokemon Promo PSA 10 </figcaption>
         </figure>
 
-        <div class="guess-container">
+        <div class="guess-container" data-price="2600">
             <div class="guess-form">
                 <span class="dollar-sign">$</span>
-                <input type="text" id="guess-input-2" placeholder="Enter amount">
-                <button onclick="checkGuess2()">Submit</button>
+                <input type="text" class="guess-input" placeholder="Enter amount">
+                <button class="guess-submit">Submit</button>
             </div>
-            <div class="guess-result" id="guess-result-2"></div>
+            <div class="guess-result"></div>
+            <button class="guess-reveal">Show price</button>
         </div>
+        </section>
 
-        <script>
-            function checkGuess2() {
-                var input = document.getElementById('guess-input-2').value;
-                var result = document.getElementById('guess-result-2');
-                var cleaned = input.replace(/[$,\s]/g, '');
-                var num = parseFloat(cleaned);
-
-                if (isNaN(num)) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
-                    return;
-                }
-
-                if (num === 2600) {
-                    result.className = 'guess-result correct';
-                    result.innerHTML = '&#10004; Correct! This card is worth $2,600!';
-                } else if (num < 2600) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too low! Guess higher.';
-                } else {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too high! Guess lower.';
-                }
-            }
-
-            document.getElementById('guess-input-2').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') checkGuess2();
-            });
-        </script>
-
+        <section class="card-quiz">
         <div class="content">
             <p style="text-align: center; margin-top: 2em;">This sleepy cute Dragonite?</p>
         </div>
@@ -339,87 +354,140 @@
             <div class="flip-card">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <img src="back.jpg" alt="Card Back">
+                        <img src="images/back.jpg" alt="Card Back">
                     </div>
                     <div class="flip-card-back">
-                        <img src="dragonite.jpg" alt="Dragonite">
+                        <img src="images/dragonite.jpg" alt="Dragonite">
                     </div>
                 </div>
             </div>
             <figcaption>Dragonite V #192 Pokemon Evolving Skies PSA 10</figcaption>
         </figure>
 
-        <div class="guess-container">
+        <div class="guess-container" data-price="960">
             <div class="guess-form">
                 <span class="dollar-sign">$</span>
-                <input type="text" id="guess-input-3" placeholder="Enter amount">
-                <button onclick="checkGuess3()">Submit</button>
+                <input type="text" class="guess-input" placeholder="Enter amount">
+                <button class="guess-submit">Submit</button>
             </div>
-            <div class="guess-result" id="guess-result-3"></div>
+            <div class="guess-result"></div>
+            <button class="guess-reveal">Show price</button>
         </div>
+        </section>
 
         <script>
-            function checkGuess3() {
-                var input = document.getElementById('guess-input-3').value;
-                var result = document.getElementById('guess-result-3');
-                var cleaned = input.replace(/[$,\s]/g, '');
-                var num = parseFloat(cleaned);
+            /*
+             * Price-guessing for every .guess-container on the page.
+             * Each card carries its answer in data-price. Players get up to
+             * MAX_GUESSES tries (with too-high/too-low hints); after that, or
+             * when they click "Show price", the real price is revealed.
+             */
+            (function () {
+                var MAX_GUESSES = 3;
 
-                if (isNaN(num)) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Wrong! Please enter a number.';
-                    return;
+                function fmt(n) {
+                    return '$' + Number(n).toLocaleString('en-US');
                 }
 
-                if (num === 960) {
-                    result.className = 'guess-result correct';
-                    result.innerHTML = '&#10004; Correct! This card is worth $960!';
-                } else if (num < 960) {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too low! Guess higher.';
-                } else {
-                    result.className = 'guess-result wrong';
-                    result.innerHTML = '&#10060; Too high! Guess lower.';
+                function finish(container) {
+                    container.classList.add('done');
+                    container.querySelector('.guess-input').disabled = true;
+                    container.querySelector('.guess-submit').disabled = true;
+                    container.querySelector('.guess-reveal').disabled = true;
                 }
-            }
 
-            document.getElementById('guess-input-3').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') checkGuess3();
-            });
+                function reveal(container) {
+                    var price = parseFloat(container.dataset.price);
+                    var result = container.querySelector('.guess-result');
+                    result.className = 'guess-result revealed';
+                    result.innerHTML = 'The real price is <strong>' + fmt(price) + '</strong>.';
+                    finish(container);
+                }
+
+                function submitGuess(container) {
+                    if (container.classList.contains('done')) return;
+
+                    var price = parseFloat(container.dataset.price);
+                    var input = container.querySelector('.guess-input');
+                    var result = container.querySelector('.guess-result');
+                    var num = parseFloat(input.value.replace(/[$,\s]/g, ''));
+
+                    if (isNaN(num)) {
+                        result.className = 'guess-result wrong';
+                        result.innerHTML = '&#10060; Please enter a number.';
+                        return;
+                    }
+
+                    var attempts = (parseInt(container.dataset.attempts, 10) || 0) + 1;
+                    container.dataset.attempts = attempts;
+
+                    if (num === price) {
+                        result.className = 'guess-result correct';
+                        result.innerHTML = '&#10004; Correct! This card is worth ' + fmt(price) + '!';
+                        finish(container);
+                        return;
+                    }
+
+                    if (attempts >= MAX_GUESSES) {
+                        reveal(container);
+                        return;
+                    }
+
+                    var left = MAX_GUESSES - attempts;
+                    var hint = num < price ? '&#10060; Too low! Guess higher.' : '&#10060; Too high! Guess lower.';
+                    result.className = 'guess-result wrong';
+                    result.innerHTML = hint +
+                        ' <span class="guess-left">' + left + (left === 1 ? ' guess' : ' guesses') + ' left</span>';
+                }
+
+                document.addEventListener('click', function (e) {
+                    var submitBtn = e.target.closest('.guess-submit');
+                    if (submitBtn) {
+                        submitGuess(submitBtn.closest('.guess-container'));
+                        return;
+                    }
+                    var revealBtn = e.target.closest('.guess-reveal');
+                    if (revealBtn) {
+                        reveal(revealBtn.closest('.guess-container'));
+                    }
+                });
+
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && e.target.classList.contains('guess-input')) {
+                        e.preventDefault();
+                        submitGuess(e.target.closest('.guess-container'));
+                    }
+                });
+            })();
         </script>
 
         <div class="header">
-            <h1>A Pokemon card can be so much expensive than you think. Who is buying and why?</h1>
-            <p class="subhead">Inside the world of graded Pokemon cards, where nostalgia meets speculation</p>
+            <h1>A Pokemon card can be so much expensive than you think. Who is buying a $543,000 card?</h1>
         </div>
         <div class="byline">
             <p>By <a href="https://haiyib.github.io/">Haiyi Bi</a></p>
         </div>
-        <p>In 1999, you could buy a pack of Pokemon cards for about four dollars. Today, a single card from that era can sell for more than a house. The Pokemon card market has quietly turned into one of the strangest corners of the collectibles world, driven by childhood nostalgia, YouTube unboxing videos, and a grading system that can multiply a card's value overnight.</p>
-        <p>I scraped pricing data from 10 major Pokemon card sets, and looked at what makes certain cards so much more expensive than others. The answer isn't always what you'd expect. </p>
+        <p>Back in the days, Pokemon cards were among kids who just buy them for fun. In the late 1990s, a pack of five Pokemon cards cost about four dollars. Now, trading cards became a fashionable investment, just like how Labubu became a cultural phenomenon.</p>
+        <p>The market culture has been growing rapidly in North America and Asia, and it is not only a nostalgia collection purpose. People buy, trade, sell, or even hold in-person events around Pokemon cards. Keiji Umehara, a Youtuber creating content of Pokemon cards in Singapore, said that it became both a hobby and a business.  </p>
+        <p>"Personally, I have been a collector since I was a kid. I like Pokémon, and I collect mainly because I enjoy it. I buy cards, but I do not sell very much," he said. </p>
+        
     </div>
-    <section id="scrolly-ai2html" class="scrolly-container">
-        <div class="sticky-thing">
+    <!-- ============ Scrollytelling: VizBackground + Slides ============ -->
+    <!-- Vanilla-HTML port of the Svelte Scroller/VizBackground/Slide demo. -->
+    <div class="scroller-demo">
+        <div class="scroller" id="viz-scroller">
+            <!-- sticky background (VizBackground) — data left blank for now -->
+            <div class="scroller__background">
+                <div class="viz-background" id="viz-background">
+                    <svg id="viz-svg"></svg>
+                    <div class="viz-tooltip" id="viz-tooltip"></div>
+                </div>
+            </div>
 
-            <!-- pokemon chart SVG loaded inline for D3 interaction -->
-            <div id="pokemon-chart-container" style="width: 75vw; max-width: 1008px; margin: 0 auto;"></div>
-
+            <!-- foreground (Slides) — generated from the `slides` array in JS -->
+            <div class="scroller__foreground" id="viz-foreground"></div>
         </div>
-        <div class="steps-container">
-            <div class="step" id="step-zero">
-                <p>I pulled pricing data on PSA 10 graded cards for the 10 most expensive Pokémon species. Each dot is a card. The further right, the more cards that species has. The higher up, the pricier.</p>
-            </div>
-            <div class="step" id="step-one">
-                <p>No surprise here: Charizard is king. A 1st Edition Base Set Charizard went for <strong>$269,250</strong>. It was one of the hardest cards to pull back in 1999, and it became the poster child of the entire hobby. Low supply, massive nostalgia, and a generation of collectors who grew up wanting one.</p>
-            </div>
-            <div class="step" id="step-two">
-                <p><strong>Mew</strong>, <strong>Mewtwo</strong>, and <strong>Rayquaza</strong> follow a similar pattern. They were fan favorites in the games and movies, and many of their expensive cards come from limited promo sets or Japanese exclusives that never got wide distribution.</p>
-            </div>
-            <div class="step" id="step-three">
-                <p>But zoom out and you'll notice most cards, even PSA 10s, sell for under $1,000. What separates a $50 card from a $50,000 one usually comes down to the print run, the set it's from, and whether it's a 1st Edition. The Pokémon on the front matters, but it's not the whole story.</p>
-            </div>
-        </div>
-    </section>
+    </div>
     <div class="content">
         <p>So what actually drives the price? A few things. First, the grading. PSA, the biggest card grading company, scores cards on a 1 to 10 scale. A PSA 10, meaning the card is in virtually perfect condition, can be worth 10 or even 50 times more than the same card at a PSA 8. For old cards printed in the late '90s, finding one in perfect shape is genuinely rare.</p>
         <p>Then there's the print run. First Edition cards from the original Base Set were only printed once. When the Pokemon Company realized how much demand there was, they reprinted the set without the 1st Edition stamp. That small difference on the card now means a difference of tens of thousands of dollars.</p>
@@ -428,148 +496,280 @@
     </div>
     <div class="footer">
         <div class="content">
-            <p>Data from <a href="https://www.pricecharting.com/">PriceCharting</a>. Analysis and visualization by <a href="https://haiyib.github.io/">Haiyi Bi</a>.</p>
+            <p>Data scraped from PSA card pricing records. Analysis and visualization by <a href="https://haiyib.github.io/">Haiyi Bi</a>.</p>
         </div>
     </div>
     <style>
-        .dimmed {
-            opacity: 0.1 !important;
+        /* ---- Scrollytelling (VizBackground + Slides) ---- */
+        .scroller-demo {
+            max-width: 100vw;
+            margin: 0;
         }
-        .highlighted {
-            opacity: 1 !important;
+
+        .scroller { position: relative; }
+
+        /* sticky background graphic */
+        .scroller__background {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .annotation-hidden {
-            opacity: 0 !important;
+
+        .viz-background {
+            position: relative;
+            width: 75vw;
+            max-width: 1008px;
+            height: 84vh;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        #pokemon-chart-container svg circle,
-        #pokemon-chart-container svg text,
-        #pokemon-chart-container svg polyline {
-            transition: opacity 0.5s ease;
+
+        #viz-svg { width: 100%; height: 100%; display: block; }
+        .viz-tooltip {
+            position: absolute;
+            display: none;
+            transform: translate(-50%, -100%);
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-family: system-ui, sans-serif;
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.35;
+            text-align: center;
+            pointer-events: none;
+            white-space: nowrap;
         }
+        .viz-tooltip strong { font-size: 1.2rem; }
+        .viz-tooltip .tt-name { color: #888; font-size: 0.85rem; }
+
+        /* foreground overlaps the sticky background */
+        .scroller__foreground {
+            position: relative;
+            margin-top: -100vh;
+            z-index: 2;
+            pointer-events: none;   /* let pointer events reach the chart underneath */
+        }
+        .slide__inner { pointer-events: auto; }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.25rem;
+        }
+        .slide__inner {
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            padding: 1.5em 1.75em;
+        }
+        .slide__inner h3 {
+            font-family: 'Lora', Georgia, serif;
+            margin: 0 0 0.4em;
+            font-size: 1.5em;
+        }
+        .slide__inner p { margin: 0; line-height: 1.5; }
     </style>
     <script>
+        /* ---- Scroller: PSA 10 price-over-time VizBackground + Slides ---- */
+        (function () {
+            const cards = [{"name":"Charizard [1st Edition] #4","species":"Charizard","set":"Base Set","grade":"PSA 10","peak":534250.0,"series":[{"d":"2021-02-01","v":295300.0},{"d":"2021-03-01","v":311800.0},{"d":"2021-04-01","v":311800.0},{"d":"2021-05-01","v":349995.0},{"d":"2021-06-01","v":349995.0},{"d":"2021-07-01","v":349995.0},{"d":"2021-08-01","v":499999.0},{"d":"2021-09-01","v":139251.28},{"d":"2021-10-01","v":106816.99},{"d":"2021-11-01","v":64681.09},{"d":"2021-12-01","v":331126.97},{"d":"2022-01-01","v":326682.57},{"d":"2022-02-01","v":312555.39},{"d":"2022-03-01","v":311811.81},{"d":"2022-04-01","v":316548.06},{"d":"2022-05-01","v":314832.36},{"d":"2022-06-01","v":66663.37},{"d":"2022-07-01","v":66663.37},{"d":"2022-08-01","v":73079.87},{"d":"2022-09-01","v":74018.78},{"d":"2022-10-01","v":82092.02},{"d":"2022-11-01","v":304006.07},{"d":"2022-12-01","v":306246.08},{"d":"2023-01-01","v":305553.89},{"d":"2023-02-01","v":304965.88},{"d":"2023-03-01","v":46766.5},{"d":"2023-04-01","v":36766.0},{"d":"2023-05-01","v":36766.0},{"d":"2023-06-01","v":36766.0},{"d":"2023-07-01","v":36766.0},{"d":"2023-08-01","v":36766.0},{"d":"2023-09-01","v":36766.0},{"d":"2023-10-01","v":36766.0},{"d":"2023-11-01","v":36766.0},{"d":"2023-12-01","v":174350.25},{"d":"2024-01-01","v":288801.0},{"d":"2024-02-01","v":288801.0},{"d":"2024-03-01","v":329336.8},{"d":"2024-04-01","v":320432.05},{"d":"2024-05-01","v":319999.0},{"d":"2024-06-01","v":236923.37},{"d":"2024-07-01","v":188745.7},{"d":"2024-08-01","v":194650.0},{"d":"2024-09-01","v":224418.02},{"d":"2024-10-01","v":221468.04},{"d":"2024-11-01","v":220803.53},{"d":"2024-12-01","v":251338.24},{"d":"2025-01-01","v":268908.08},{"d":"2025-02-01","v":270858.95},{"d":"2025-03-01","v":258294.18},{"d":"2025-04-01","v":258568.13},{"d":"2025-05-01","v":259510.08},{"d":"2025-06-01","v":260398.87},{"d":"2025-07-01","v":261115.29},{"d":"2025-08-01","v":261722.7},{"d":"2025-09-01","v":262259.47},{"d":"2025-10-01","v":262782.83},{"d":"2025-11-01","v":263178.12},{"d":"2025-12-01","v":166126.16},{"d":"2026-01-01","v":165411.45},{"d":"2026-02-01","v":168424.47},{"d":"2026-03-01","v":175000.0},{"d":"2026-04-01","v":534250.0},{"d":"2026-05-01","v":350439.63},{"d":"2026-06-01","v":362900.0},{"d":"2026-07-01","v":343098.0}]},{"name":"Gengar [Masaki] #94","species":"Gengar","set":"Japanese Vending","grade":"PSA 10","peak":168000.0,"series":[{"d":"2023-10-01","v":14100.0},{"d":"2023-11-01","v":12100.0},{"d":"2023-12-01","v":10500.0},{"d":"2024-01-01","v":10500.0},{"d":"2024-02-01","v":10500.0},{"d":"2024-03-01","v":10239.56},{"d":"2024-04-01","v":10256.45},{"d":"2024-05-01","v":10276.85},{"d":"2024-06-01","v":10285.03},{"d":"2024-07-01","v":10285.03},{"d":"2024-08-01","v":10700.0},{"d":"2024-09-01","v":10355.5},{"d":"2024-10-01","v":10500.0},{"d":"2024-11-01","v":10500.0},{"d":"2024-12-01","v":10500.0},{"d":"2025-01-01","v":10500.0},{"d":"2025-02-01","v":10600.0},{"d":"2025-03-01","v":10500.0},{"d":"2025-04-01","v":10500.0},{"d":"2025-05-01","v":16624.35},{"d":"2025-06-01","v":16624.35},{"d":"2025-07-01","v":16624.35},{"d":"2025-08-01","v":22995.48},{"d":"2025-09-01","v":22756.75},{"d":"2025-10-01","v":16474.91},{"d":"2025-11-01","v":15404.59},{"d":"2025-12-01","v":11200.0},{"d":"2026-01-01","v":13871.34},{"d":"2026-02-01","v":11982.84},{"d":"2026-03-01","v":16194.59},{"d":"2026-04-01","v":16159.06},{"d":"2026-05-01","v":16045.66},{"d":"2026-06-01","v":147000.0},{"d":"2026-07-01","v":168000.0}]},{"name":"Mew ex #3/SV-P","species":"Mew","set":"Chinese Promo","grade":"PSA 10","peak":58250.0,"series":[{"d":"2025-06-01","v":17275.0},{"d":"2025-07-01","v":16475.0},{"d":"2025-08-01","v":15401.0},{"d":"2025-09-01","v":17582.39},{"d":"2025-10-01","v":20766.46},{"d":"2025-11-01","v":23180.58},{"d":"2025-12-01","v":18700.0},{"d":"2026-01-01","v":19250.0},{"d":"2026-02-01","v":19211.0},{"d":"2026-03-01","v":23101.0},{"d":"2026-04-01","v":26650.0},{"d":"2026-05-01","v":31566.82},{"d":"2026-06-01","v":58250.0},{"d":"2026-07-01","v":58250.0}]},{"name":"Rayquaza [Gold Star] #107","species":"Rayquaza","set":"EX Deoxys","grade":"PSA 10","peak":48970.51,"series":[{"d":"2021-04-01","v":12001.01},{"d":"2021-05-01","v":12001.01},{"d":"2021-06-01","v":12001.01},{"d":"2021-07-01","v":12001.01},{"d":"2021-08-01","v":12001.01},{"d":"2021-09-01","v":12001.01},{"d":"2021-10-01","v":12001.01},{"d":"2021-11-01","v":40200.0},{"d":"2021-12-01","v":40200.0},{"d":"2022-01-01","v":40200.0},{"d":"2022-02-01","v":40200.0},{"d":"2022-03-01","v":40200.0},{"d":"2022-04-01","v":40200.0},{"d":"2022-05-01","v":40200.0},{"d":"2022-06-01","v":40200.0},{"d":"2022-07-01","v":40200.0},{"d":"2022-08-01","v":40200.0},{"d":"2022-09-01","v":40200.0},{"d":"2022-10-01","v":40200.0},{"d":"2022-11-01","v":40200.0},{"d":"2022-12-01","v":40200.0},{"d":"2023-01-01","v":40200.0},{"d":"2023-02-01","v":40200.0},{"d":"2023-03-01","v":40200.0},{"d":"2023-04-01","v":40293.44},{"d":"2023-05-01","v":40293.44},{"d":"2023-06-01","v":46553.67},{"d":"2023-07-01","v":46089.8},{"d":"2023-08-01","v":45828.47},{"d":"2023-09-01","v":45662.49},{"d":"2023-10-01","v":45493.8},{"d":"2023-11-01","v":45348.95},{"d":"2023-12-01","v":44406.08},{"d":"2024-01-01","v":23946.23},{"d":"2024-02-01","v":27425.71},{"d":"2024-03-01","v":44399.0},{"d":"2024-04-01","v":32550.54},{"d":"2024-05-01","v":32550.54},{"d":"2024-06-01","v":29775.95},{"d":"2024-07-01","v":30437.26},{"d":"2024-08-01","v":30724.49},{"d":"2024-09-01","v":32550.54},{"d":"2024-10-01","v":32550.54},{"d":"2024-11-01","v":32550.54},{"d":"2024-12-01","v":32550.54},{"d":"2025-01-01","v":32550.54},{"d":"2025-02-01","v":32550.54},{"d":"2025-03-01","v":32550.54},{"d":"2025-04-01","v":32550.54},{"d":"2025-05-01","v":32550.54},{"d":"2025-06-01","v":32550.54},{"d":"2025-07-01","v":32550.54},{"d":"2025-08-01","v":32551.47},{"d":"2025-09-01","v":32626.38},{"d":"2025-10-01","v":32699.87},{"d":"2025-11-01","v":32775.88},{"d":"2025-12-01","v":32850.93},{"d":"2026-01-01","v":32918.58},{"d":"2026-02-01","v":48970.51},{"d":"2026-03-01","v":48598.0},{"d":"2026-04-01","v":48598.0},{"d":"2026-05-01","v":48598.0},{"d":"2026-06-01","v":48598.0},{"d":"2026-07-01","v":48598.0}]},{"name":"Shining Mewtwo [1st Edition] #109","species":"Mewtwo","set":"Neo Destiny","grade":"PSA 10","peak":27848.35,"series":[{"d":"2021-06-01","v":4311.81},{"d":"2021-07-01","v":4211.55},{"d":"2021-08-01","v":4211.55},{"d":"2021-09-01","v":4205.38},{"d":"2021-10-01","v":4619.0},{"d":"2021-11-01","v":4521.0},{"d":"2021-12-01","v":4327.84},{"d":"2022-01-01","v":4228.67},{"d":"2022-02-01","v":4416.41},{"d":"2022-03-01","v":4288.17},{"d":"2022-04-01","v":4294.13},{"d":"2022-05-01","v":4200.0},{"d":"2022-06-01","v":4222.18},{"d":"2022-07-01","v":3473.94},{"d":"2022-08-01","v":3899.86},{"d":"2022-09-01","v":3991.94},{"d":"2022-10-01","v":3748.34},{"d":"2022-11-01","v":4000.0},{"d":"2022-12-01","v":4000.0},{"d":"2023-01-01","v":4000.0},{"d":"2023-02-01","v":3331.97},{"d":"2023-03-01","v":3449.38},{"d":"2023-04-01","v":3593.02},{"d":"2023-05-01","v":3450.0},{"d":"2023-06-01","v":3958.09},{"d":"2023-07-01","v":3896.87},{"d":"2023-08-01","v":3908.25},{"d":"2023-09-01","v":3904.64},{"d":"2023-10-01","v":3903.46},{"d":"2023-11-01","v":3550.0},{"d":"2023-12-01","v":3062.5},{"d":"2024-01-01","v":3572.44},{"d":"2024-02-01","v":3575.0},{"d":"2024-03-01","v":3475.89},{"d":"2024-04-01","v":3480.71},{"d":"2024-05-01","v":3397.02},{"d":"2024-06-01","v":3425.0},{"d":"2024-07-01","v":3550.0},{"d":"2024-08-01","v":3515.8},{"d":"2024-09-01","v":3507.86},{"d":"2024-10-01","v":3219.69},{"d":"2024-11-01","v":3516.78},{"d":"2024-12-01","v":3405.69},{"d":"2025-01-01","v":3750.0},{"d":"2025-02-01","v":3750.0},{"d":"2025-03-01","v":3750.0},{"d":"2025-04-01","v":4878.3},{"d":"2025-05-01","v":6212.09},{"d":"2025-06-01","v":6500.0},{"d":"2025-07-01","v":7052.0},{"d":"2025-08-01","v":7375.5},{"d":"2025-09-01","v":8519.18},{"d":"2025-10-01","v":8799.0},{"d":"2025-11-01","v":10660.6},{"d":"2025-12-01","v":10077.0},{"d":"2026-01-01","v":10800.0},{"d":"2026-02-01","v":10783.14},{"d":"2026-03-01","v":11899.0},{"d":"2026-04-01","v":16517.54},{"d":"2026-05-01","v":23675.0},{"d":"2026-06-01","v":27848.35},{"d":"2026-07-01","v":27068.45}]},{"name":"Pikachu #153/SV-P","species":"Pikachu","set":"Chinese Promo","grade":"PSA 10","peak":4400.0,"series":[{"d":"2025-01-01","v":520.0},{"d":"2025-02-01","v":520.0},{"d":"2025-03-01","v":520.0},{"d":"2025-05-01","v":809.0},{"d":"2025-06-01","v":1792.35},{"d":"2025-07-01","v":2050.0},{"d":"2025-08-01","v":1774.64},{"d":"2025-09-01","v":1670.76},{"d":"2025-10-01","v":1765.92},{"d":"2025-11-01","v":1651.62},{"d":"2025-12-01","v":1450.0},{"d":"2026-01-01","v":1458.74},{"d":"2026-02-01","v":1678.92},{"d":"2026-03-01","v":2000.0},{"d":"2026-04-01","v":2099.0},{"d":"2026-05-01","v":2892.68},{"d":"2026-06-01","v":4400.0},{"d":"2026-07-01","v":3831.35}]},{"name":"Pikachu with Grey Felt Hat #85","species":"Pikachu","set":"Promo","grade":"PSA 10","peak":3100.0,"series":[{"d":"2023-10-01","v":612.53},{"d":"2023-11-01","v":483.05},{"d":"2023-12-01","v":374.66},{"d":"2024-01-01","v":318.98},{"d":"2024-02-01","v":234.5},{"d":"2024-03-01","v":229.33},{"d":"2024-04-01","v":220.27},{"d":"2024-05-01","v":206.62},{"d":"2024-06-01","v":232.98},{"d":"2024-07-01","v":215.0},{"d":"2024-08-01","v":216.31},{"d":"2024-09-01","v":250.83},{"d":"2024-10-01","v":308.4},{"d":"2024-11-01","v":383.45},{"d":"2024-12-01","v":550.0},{"d":"2025-01-01","v":728.0},{"d":"2025-02-01","v":700.0},{"d":"2025-03-01","v":735.0},{"d":"2025-04-01","v":813.33},{"d":"2025-05-01","v":817.0},{"d":"2025-06-01","v":851.39},{"d":"2025-07-01","v":1132.91},{"d":"2025-08-01","v":1148.88},{"d":"2025-09-01","v":2050.0},{"d":"2025-10-01","v":1793.46},{"d":"2025-11-01","v":1411.13},{"d":"2025-12-01","v":1475.0},{"d":"2026-01-01","v":1912.0},{"d":"2026-02-01","v":1989.5},{"d":"2026-03-01","v":2650.0},{"d":"2026-04-01","v":2996.63},{"d":"2026-05-01","v":3100.0},{"d":"2026-06-01","v":2882.2},{"d":"2026-07-01","v":2850.0}]},{"name":"Dragonite V #192","species":"Dragonite","set":"Evolving Skies","grade":"PSA 10","peak":1300.0,"series":[{"d":"2021-09-01","v":750.85},{"d":"2021-10-01","v":510.3},{"d":"2021-11-01","v":409.39},{"d":"2021-12-01","v":364.99},{"d":"2022-01-01","v":416.67},{"d":"2022-02-01","v":376.56},{"d":"2022-03-01","v":346.73},{"d":"2022-04-01","v":310.0},{"d":"2022-05-01","v":285.0},{"d":"2022-06-01","v":253.72},{"d":"2022-07-01","v":244.11},{"d":"2022-08-01","v":243.75},{"d":"2022-09-01","v":249.99},{"d":"2022-10-01","v":219.01},{"d":"2022-11-01","v":224.67},{"d":"2022-12-01","v":214.78},{"d":"2023-01-01","v":232.17},{"d":"2023-02-01","v":208.28},{"d":"2023-03-01","v":209.21},{"d":"2023-04-01","v":190.25},{"d":"2023-05-01","v":195.88},{"d":"2023-06-01","v":195.0},{"d":"2023-07-01","v":210.57},{"d":"2023-08-01","v":208.75},{"d":"2023-09-01","v":198.21},{"d":"2023-10-01","v":175.92},{"d":"2023-11-01","v":173.2},{"d":"2023-12-01","v":196.02},{"d":"2024-01-01","v":185.13},{"d":"2024-02-01","v":188.33},{"d":"2024-03-01","v":200.0},{"d":"2024-04-01","v":282.5},{"d":"2024-05-01","v":371.5},{"d":"2024-06-01","v":297.28},{"d":"2024-07-01","v":255.43},{"d":"2024-08-01","v":252.5},{"d":"2024-09-01","v":258.75},{"d":"2024-10-01","v":270.0},{"d":"2024-11-01","v":309.37},{"d":"2024-12-01","v":354.36},{"d":"2025-01-01","v":485.0},{"d":"2025-02-01","v":493.5},{"d":"2025-03-01","v":477.57},{"d":"2025-04-01","v":457.29},{"d":"2025-05-01","v":476.28},{"d":"2025-06-01","v":526.38},{"d":"2025-07-01","v":736.53},{"d":"2025-08-01","v":947.7},{"d":"2025-09-01","v":1159.34},{"d":"2025-10-01","v":1082.71},{"d":"2025-11-01","v":927.5},{"d":"2025-12-01","v":814.31},{"d":"2026-01-01","v":883.08},{"d":"2026-02-01","v":871.5},{"d":"2026-03-01","v":925.0},{"d":"2026-04-01","v":1229.8},{"d":"2026-05-01","v":1300.0},{"d":"2026-06-01","v":1200.0},{"d":"2026-07-01","v":1239.99}]},{"name":"Ditto [Bulbasaur] #36","species":"Ditto","set":"EX Delta Species","grade":"Ungraded","peak":94.53,"series":[{"d":"2021-01-01","v":13.79},{"d":"2021-02-01","v":14.0},{"d":"2021-03-01","v":20.08},{"d":"2021-04-01","v":17.76},{"d":"2021-05-01","v":13.43},{"d":"2021-06-01","v":15.24},{"d":"2021-07-01","v":9.28},{"d":"2021-08-01","v":12.2},{"d":"2021-09-01","v":14.36},{"d":"2021-10-01","v":15.48},{"d":"2021-11-01","v":20.0},{"d":"2021-12-01","v":16.26},{"d":"2022-01-01","v":16.92},{"d":"2022-02-01","v":15.01},{"d":"2022-03-01","v":11.5},{"d":"2022-04-01","v":9.0},{"d":"2022-05-01","v":9.0},{"d":"2022-06-01","v":8.09},{"d":"2022-07-01","v":14.71},{"d":"2022-08-01","v":20.28},{"d":"2022-09-01","v":14.13},{"d":"2022-10-01","v":15.4},{"d":"2022-11-01","v":16.69},{"d":"2022-12-01","v":17.86},{"d":"2023-01-01","v":17.8},{"d":"2023-02-01","v":17.67},{"d":"2023-03-01","v":19.99},{"d":"2023-04-01","v":23.57},{"d":"2023-05-01","v":24.94},{"d":"2023-06-01","v":18.33},{"d":"2023-07-01","v":14.25},{"d":"2023-08-01","v":18.08},{"d":"2023-09-01","v":14.93},{"d":"2023-10-01","v":14.51},{"d":"2023-11-01","v":13.88},{"d":"2023-12-01","v":14.99},{"d":"2024-01-01","v":15.74},{"d":"2024-02-01","v":14.54},{"d":"2024-03-01","v":13.99},{"d":"2024-04-01","v":16.56},{"d":"2024-05-01","v":17.55},{"d":"2024-06-01","v":16.5},{"d":"2024-07-01","v":15.5},{"d":"2024-08-01","v":19.67},{"d":"2024-09-01","v":17.36},{"d":"2024-10-01","v":14.78},{"d":"2024-11-01","v":15.87},{"d":"2024-12-01","v":16.61},{"d":"2025-01-01","v":17.16},{"d":"2025-02-01","v":19.12},{"d":"2025-03-01","v":19.99},{"d":"2025-04-01","v":45.88},{"d":"2025-05-01","v":51.12},{"d":"2025-06-01","v":40.0},{"d":"2025-07-01","v":37.0},{"d":"2025-08-01","v":42.71},{"d":"2025-09-01","v":40.83},{"d":"2025-10-01","v":42.95},{"d":"2025-11-01","v":40.58},{"d":"2025-12-01","v":49.0},{"d":"2026-01-01","v":64.35},{"d":"2026-02-01","v":67.11},{"d":"2026-03-01","v":89.75},{"d":"2026-04-01","v":93.6},{"d":"2026-05-01","v":94.53},{"d":"2026-06-01","v":92.24},{"d":"2026-07-01","v":93.6}]}];
 
-        /* Load the pokemon chart SVG inline so D3 can manipulate it */
-        fetch('pokemon-chart.svg')
-            .then(function(r) { return r.text() })
-            .then(function(svgText) {
-                document.getElementById('pokemon-chart-container').innerHTML = svgText;
-                var svg = d3.select('#pokemon-chart-container svg');
-                svg.attr('width', '100%').attr('height', null);
-                initScrolly();
+            // slides: an overview step, then one per card (highest peak first)
+            const slides = [{
+                kind: 'overview',
+                title: 'Nine cards, wildly different prices',
+                description: 'Each line is one card\u2019s PSA\u00a010 price over time (log scale). Scroll to walk through them, most valuable first.'
+            }].concat(cards.map(function (c) {
+                return {
+                    kind: 'card', card: c, title: c.name,
+                    description: c.set + ' \u00b7 ' + c.grade + ' peak $' + Math.round(c.peak).toLocaleString()
+                };
+            }));
+
+            let index = 0;
+            const count = slides.length;
+
+            // foreground slides
+            document.getElementById('viz-foreground').innerHTML = slides.map(function (s) {
+                return '<section class="slide"><div class="slide__inner">' +
+                       '<h3>' + s.title + '</h3><p>' + s.description + '</p></div></section>';
+            }).join('');
+
+            // ---- chart ----
+            const parseDate = d3.timeParse('%Y-%m-%d');
+            cards.forEach(function (c) {
+                c.points = c.series.map(function (p) { return { date: parseDate(p.d), v: p.v }; });
             });
+            const allPts = cards.reduce(function (a, c) { return a.concat(c.points); }, []);
+            // start where EVERY card has data (the latest first-date), so all lines are visible
+            const commonStart = d3.max(cards, function (c) { return c.points[0].date; });
+            const xEnd = d3.max(allPts, function (p) { return p.date; });
+            // start exactly at the common start (no left gap); small pad only on the right
+            const xPad = (xEnd - commonStart) * 0.04;
+            const xDomain = [commonStart, new Date(xEnd.getTime() + xPad)];
+            const visPts = allPts.filter(function (p) { return p.date >= commonStart; });
+            const yMin = d3.min(visPts, function (p) { return p.v; });
+            const yMax = d3.max(visPts, function (p) { return p.v; });
+            // each species drawn in its signature color
+            const SPECIES_COLOR = {
+                'Charizard': '#e8590c',   // orange
+                'Gengar':    '#5b2a9a',   // deep purple
+                'Mew':       '#ec6fa6',   // pink
+                'Rayquaza':  '#1f9e57',   // green
+                'Mewtwo':    '#7c7fc0',   // lavender
+                'Pikachu':   '#eab308',   // yellow
+                'Dragonite': '#e8b04b',   // amber
+                'Ditto':     '#c77ddb'    // lilac
+            };
+            // per-card override so the two Pikachus are distinguishable
+            const CARD_COLOR = { 'Pikachu with Grey Felt Hat #85': '#b8860b' };
+            function color(name) {
+                if (CARD_COLOR[name]) return CARD_COLOR[name];
+                const c = cards.find(function (k) { return k.name === name; });
+                return SPECIES_COLOR[c ? c.species : name] || '#888';
+            }
+            const svg = d3.select('#viz-svg');
+            const tooltip = d3.select('#viz-tooltip');
+            function fmt(n) {
+                return '$' + Math.round(n).toLocaleString('en-US');
+            }
+            const yTicks = [10, 100, 1000, 10000, 100000, 1000000].filter(function (d) { return d >= yMin && d <= yMax; });
 
-        /*
-         * Species CSS class mapping:
-         * Charizard: cls-6, cls-8    Mewtwo: cls-19, cls-16
-         * Rayquaza: cls-24, cls-12   Venusaur: cls-22, cls-5
-         * Mew: cls-17, cls-9         Infernape: cls-21, cls-4
-         * Chansey: cls-23, cls-20    Blastoise: cls-11, cls-10
-         * Latios: cls-15, cls-13     Gengar: cls-14, cls-7
-         * Background/other: cls-18
-         */
+            function draw(highlight) {
+                const node = document.getElementById('viz-background');
+                const W = node.clientWidth, H = node.clientHeight;
+                const m = { top: 26, right: 30, bottom: 42, left: 92 };
+                svg.attr('viewBox', '0 0 ' + W + ' ' + H).attr('width', W).attr('height', H).selectAll('*').remove();
 
-        var allSpeciesClasses = '.cls-6,.cls-8,.cls-19,.cls-16,.cls-24,.cls-12,.cls-22,.cls-5,.cls-17,.cls-9,.cls-21,.cls-4,.cls-23,.cls-20,.cls-11,.cls-10,.cls-15,.cls-13,.cls-14,.cls-7';
-        var charizardClasses = '.cls-6,.cls-8';
-        var legendaryClasses = '.cls-17,.cls-9,.cls-19,.cls-16,.cls-24,.cls-12';
-        var bgClasses = '.cls-18';
-        var annotationSelector = '.cls-30,.cls-2';
+                const x = d3.scaleTime().domain(xDomain).range([m.left, W - m.right]);
+                // pad the y-range (log) so lines get more room and don't hug the edges
+                const y = d3.scaleLog().domain([Math.max(1, yMin / 1.6), yMax * 1.6]).range([H - m.bottom, m.top]).nice();
 
-        function resetAll() {
-            d3.selectAll('#pokemon-chart-container circle').classed('dimmed', false).classed('highlighted', false);
-            d3.selectAll(annotationSelector).classed('annotation-hidden', false);
-        }
+                // clip so earlier-starting lines don't spill left of the axis
+                svg.append('defs').append('clipPath').attr('id', 'plot-clip').append('rect')
+                    .attr('x', m.left).attr('y', m.top)
+                    .attr('width', Math.max(0, W - m.left - m.right))
+                    .attr('height', Math.max(0, H - m.top - m.bottom));
 
-        function dimAll() {
-            d3.selectAll('#pokemon-chart-container circle').classed('dimmed', true).classed('highlighted', false);
-        }
+                const g = svg.append('g');
+                const spanDays = (xDomain[1] - xDomain[0]) / 864e5;
+                g.append('g').attr('transform', 'translate(0,' + (H - m.bottom) + ')')
+                    .call(d3.axisBottom(x).ticks(6).tickFormat(spanDays > 730 ? d3.timeFormat('%Y') : d3.timeFormat('%b %y')))
+                    .attr('color', '#999').style('font-size', '15px');
+                g.append('g').attr('transform', 'translate(' + m.left + ',0)')
+                    .call(d3.axisLeft(y).tickValues(yTicks).tickFormat(fmt)).attr('color', '#999').style('font-size', '15px');
 
-        function highlightClasses(selector) {
-            d3.selectAll(selector).classed('dimmed', false).classed('highlighted', true);
-        }
+                const line = d3.line().x(function (p) { return x(p.date); }).y(function (p) { return y(p.v); });
+                const plot = svg.append('g').attr('clip-path', 'url(#plot-clip)');
+                const paths = plot.selectAll('path').data(cards).join('path')
+                    .attr('fill', 'none')
+                    .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round')
+                    .attr('d', function (c) { return line(c.points); });
 
-        function initScrolly() {
+                // foreground layer (above the lines): markers, species icons, hover dot
+                const fg = svg.append('g');
+                const markG = fg.append('g');
 
-            /* Step zero: overview — show everything, hide annotation */
-            d3.select("#step-zero").on('stepin', function (e) {
-                resetAll();
-                d3.selectAll(annotationSelector).classed('annotation-hidden', true);
-            });
+                // species icon — shown only on hover, at the hovered point
+                const ICON = 64;
+                const hoverIcon = fg.append('image').attr('class', 'sp')
+                    .attr('width', ICON).attr('height', ICON)
+                    .attr('preserveAspectRatio', 'xMidYMid meet')
+                    .style('image-rendering', 'pixelated')
+                    .style('display', 'none');
 
-            d3.select("#step-zero").on('stepout', function (e) {
-                if (e.detail.direction === 'up') {
-                    resetAll();
-                    d3.selectAll(annotationSelector).classed('annotation-hidden', true);
+                // base styling = current scrolly step (bold highlighted card, others dim)
+                function applyBase() {
+                    paths.attr('stroke', function (c) { return color(c.name); })
+                        .attr('stroke-width', function (c, i) { return i === highlight ? 4 : 2.5; })
+                        .attr('opacity', function (c, i) { return (highlight === null || i === highlight) ? 1 : 0.12; });
                 }
-            });
 
-            /* Step one: highlight Charizard, show annotation */
-            d3.select("#step-one").on('stepin', function (e) {
-                dimAll();
-                highlightClasses(charizardClasses);
-                d3.selectAll(annotationSelector).classed('annotation-hidden', false);
-            });
+                function drawMarkers(ci) {
+                    markG.selectAll('*').remove();
+                    if (ci == null || !cards[ci]) return;
+                    const c = cards[ci];
+                    const vp = c.points.filter(function (p) { return p.date >= commonStart; });
+                    if (!vp.length) return;
+                    const peakPt = vp.reduce(function (a, b) { return b.v > a.v ? b : a; }, vp[0]);
+                    markG.append('circle').attr('cx', x(peakPt.date)).attr('cy', y(peakPt.v)).attr('r', 6)
+                        .attr('fill', color(c.name)).attr('stroke', '#fff').attr('stroke-width', 2);
+                }
 
-            /* Step two: highlight legendary/fan-fave species */
-            d3.select("#step-two").on('stepin', function (e) {
-                dimAll();
-                highlightClasses(legendaryClasses);
-                d3.selectAll(annotationSelector).classed('annotation-hidden', true);
-            });
+                applyBase();
+                drawMarkers(highlight);
 
-            /* Step three: show everything again */
-            d3.select("#step-three").on('stepin', function (e) {
-                resetAll();
-                d3.selectAll(annotationSelector).classed('annotation-hidden', false);
-            });
-        }
+                // ---- hover: highlight the nearest line + show its price ----
+                const hoverPts = [];
+                cards.forEach(function (c, ci) {
+                    c.points.forEach(function (p) {
+                        if (p.date >= commonStart) hoverPts.push([x(p.date), y(p.v), ci, p]);
+                    });
+                });
+                svg.append('rect')
+                    .attr('x', m.left).attr('y', m.top)
+                    .attr('width', Math.max(0, W - m.left - m.right))
+                    .attr('height', Math.max(0, H - m.top - m.bottom))
+                    .attr('fill', 'none').attr('pointer-events', 'all')
+                    .on('pointermove', function (event) {
+                        if (!hoverPts.length) return;
+                        const pt = d3.pointer(event, svg.node());
+                        const idx = d3.leastIndex(hoverPts, function (a) { return Math.hypot(a[0] - pt[0], a[1] - pt[1]); });
+                        if (idx == null || idx < 0) return;
+                        const hp = hoverPts[idx], ci = hp[2], p = hp[3];
+                        paths.attr('opacity', function (c, k) { return k === ci ? 1 : 0.12; })
+                            .attr('stroke-width', function (c, k) { return k === ci ? 4 : 2.5; });
+                        paths.filter(function (c, k) { return k === ci; }).raise();
+                        drawMarkers(null);
+                        // show the species icon at the hovered point
+                        hoverIcon.attr('href', 'images/icons/' + cards[ci].species.toLowerCase() + '.png')
+                            .attr('x', hp[0] - ICON / 2).attr('y', hp[1] - ICON / 2)
+                            .style('display', null).raise();
+                        tooltip.style('display', 'block')
+                            .style('left', hp[0] + 'px').style('top', (hp[1] - ICON / 2 - 6) + 'px')
+                            .html('<strong>' + fmt(p.v) + '</strong><br>' + d3.timeFormat('%b %Y')(p.date) +
+                                  '<br><span class="tt-name">' + cards[ci].name + '</span>');
+                    })
+                    .on('pointerleave', function () {
+                        applyBase();
+                        drawMarkers(highlight);
+                        hoverIcon.style('display', 'none');
+                        tooltip.style('display', 'none');
+                    });
+            }
 
-    </script>
+            function update(i) {
+                index = i;
+                const s = slides[i];
+                if (!s || s.kind === 'overview') {
+                    draw(null);
+                } else {
+                    draw(cards.indexOf(s.card));
+                }
+            }
+            update(0);
 
-
-
-    <script>
-        /*************
-        
-        This is the JavaScript that makes the scrolly work 
-        
-        *************/
-
-        /* 
-        This part attaches a scroll to the element with id="scrolly-ai2html"    
-        */
-        (() => {
-            const scroller = scrollama()
-
+            // scrollama
+            const scroller = scrollama();
             scroller
-                .setup({
-                    parent: document.querySelector("#scrolly-ai2html"),
-                    step: ".step",
-                    offset: 0.6,
-                    debug: false,
-                })
-                .onStepEnter(function ({ element, index, direction }) {
-                    const event = new CustomEvent("stepin", { detail: { direction: direction } })
-                    element.dispatchEvent(event)
-                })
-                .onStepExit(function ({ element, index, direction }) {
-                    const event = new CustomEvent("stepout", { detail: { direction: direction } })
-                    if (direction === "up" && element.previousElementSibling) {
-                        const event = new CustomEvent("stepin", { detail: { direction: direction } })
-                        element.previousElementSibling.dispatchEvent(event)
-                    }
-                })
-
-            window.addEventListener("resize", scroller.resize)
-        })()
-
+                .setup({ step: '#viz-scroller .slide', offset: 0.5 })
+                .onStepEnter(function (r) { update(r.index); });
+            window.addEventListener('resize', function () { update(index); scroller.resize(); });
+        })();
     </script>
-    <style>
-        /* Change this to adjust the padding between steps */
-        .step {
-            margin-bottom: 70vh;
-        }
-    </style>
 </body>
 
 </html>
