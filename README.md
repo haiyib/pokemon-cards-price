@@ -17,10 +17,13 @@ I scraped through Playwright at first, but it wasn't able to find the data I wan
 
 I then decided to narrow it down to nine cards where Keiji said it will be interesting to look at. They are all fan favorite, and ditto is growing popularity since the release of the game "Pokopia". So I have a D3 chart looking at how the cards' prices changed over time.
 
-### 3. Technical skills 
+### 3. Big change!
+This project was totally a different one at first. I used ggplot in R to plot the chart at first, refined it with ai2html, put it in Adobe Illustrator... and the chart was a trash and I didn't like it at the end. Also, I learned D3 recently so I wanted to try it out, and I want to make something animated and interactive, that's why I changed this whole project. 
+
+### 4. Technical skills 
 Scraping through PlayWright, writing and designing html, css, chart made by D3.js, workflow on GitHub.
 
-### 4. What I grew the most
+### 5. What I grew the most
 1. Better scraping, better html building, use D3 to make a chart.
 2. Web design! Insert a little interactive game for the first time!
 3. Adding Keiji's character too!
