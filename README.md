@@ -1,5 +1,5 @@
 # Pokemon card prices data story
-This project is my fourth story for a class I have taken in Columbia Journalism School's data journalism program called **"Data Studio"**, instructed by Jonathan Soma. This project includes a line chart visualization and scrolly telling techniques, as long as a little "guess the card's price game.
+This project is my fourth story for a class I have taken in Columbia Journalism School's data journalism program called **"Data Studio"**, instructed by Jonathan Soma. This project includes a line chart visualization and scrolly telling techniques, as long as a little "guess the card's price" game.
 
 ## _What I want to accomplish_
 This story meant to tell the readers that how a Pokemon card could be extremely expensive and not accessible to general buyers. It is a new business right now, not only among the collectors.  
