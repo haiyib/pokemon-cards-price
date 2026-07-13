@@ -32,3 +32,9 @@ Scraping through PlayWright, writing and designing html, css, chart made by D3.j
 1. Make something cool? But honestly I don't know how to make this page cooler.
 2. Better in refining the story angle, and writing the story with the chart.
 3. Make cooler viz. -_-
+
+## _Thank you!!!_ ##
+Thanks to PT again for her connection with Keiji, thanks Keiji for letting me ask a bunch of questions about Pokemon cards, to be the center of this article. 
+Thanks to my data studio mentor Kai, for his advice on a few web design things. 
+Thanks to Soma for his suggestions of the project. 
+Thanks to Yaelle my friend for providing the idea of adding a search box at the end!
